@@ -68,39 +68,15 @@ A complete analysis report is organized into five sections:
 
 ## Usage Examples
 
+Full sample output: [002837.SZ complete analysis report](reports/002837.SZ_20260430_173054/complete_report.md).
+
 Interactive CLI startup and configuration flow.
 
 ![CLI startup flow](docs/images/cli-startup.png)
 
-Market analyst report with A-share price action, technical context, and key market signals.
-
-![Market analyst report](docs/images/market-analyst.png)
-
-Social sentiment analyst report combining authorized forum signals, Tushare hotness, and optional enrichment.
-
-![Social sentiment analyst report](docs/images/social-sentiment-analyst.png)
-
-News analyst report summarizing China market news, policy context, and company events.
-
-![News analyst report](docs/images/news-analyst.png)
-
-Research team decision showing the debate between bull and bear views.
-
-![Research team decision](docs/images/research-team-decision.png)
-
-Research manager summary that turns the debate into an investment plan.
-
-![Research manager summary](docs/images/research-manager-summary.png)
-
-Trading team plan derived from the research manager's investment plan.
-
-![Trading team plan](docs/images/trading-team-plan.png)
-
 Portfolio manager final decision with portfolio-level action and risk controls.
 
 ![Portfolio manager decision](docs/images/portfolio-manager-decision.png)
-
-Full sample output: [002837.SZ complete analysis report](reports/002837.SZ_20260430_173054/complete_report.md).
 
 ## Installation
 

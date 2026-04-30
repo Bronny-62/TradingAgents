@@ -56,39 +56,15 @@ BigA-Analysis-Agents 使用 Tushare `ts_code` 格式分析 A 股标的，例如
 
 ## 使用示例
 
+完整输出示例：[002837.SZ 完整分析报告](reports/002837.SZ_20260430_173054/complete_report.md)。
+
 交互式 CLI 启动与配置流程。
 
 ![CLI 启动界面](docs/images/cli-startup.png)
 
-市场分析师报告，展示 A 股价格走势、技术结构和关键行情信号。
-
-![市场分析师报告](docs/images/market-analyst.png)
-
-社媒情绪分析师报告，结合授权论坛内容、Tushare 热度和可选补充信号。
-
-![社媒情绪分析师报告](docs/images/social-sentiment-analyst.png)
-
-新闻分析师报告，汇总中国市场新闻、政策背景和公司事件。
-
-![新闻分析师报告](docs/images/news-analyst.png)
-
-研究团队决策，展示多方和空方观点的辩论过程。
-
-![研究团队决策](docs/images/research-team-decision.png)
-
-研究经理汇总，将辩论结论收敛为投资计划。
-
-![研究经理汇总](docs/images/research-manager-summary.png)
-
-交易团队计划，基于研究经理投资计划生成交易行动方案。
-
-![交易团队计划](docs/images/trading-team-plan.png)
-
 投资组合经理最终决策，给出组合级行动建议和风险控制。
 
 ![投资组合经理决策](docs/images/portfolio-manager-decision.png)
-
-完整输出示例：[002837.SZ 完整分析报告](reports/002837.SZ_20260430_173054/complete_report.md)。
 
 ## 安装
 
