@@ -254,7 +254,7 @@ def test_social_cache_reports_coverage_when_empty(tmp_path):
 
     text = social_provider.get_a_share_social_sentiment("000001.SZ", "2024-01-01", "2024-01-31")
 
-    assert "No captured Eastmoney Guba or Xueqiu" in text
+    assert "No captured Eastmoney Guba" in text
     assert "authorized JSONL imports" in text
 
 
@@ -287,11 +287,10 @@ def test_social_cache_reads_authorized_import(tmp_path):
 
 @pytest.mark.unit
 def test_social_monitor_source_symbol_mapping():
-    assert platform_symbol("300750.SZ", "xueqiu") == "SZ300750"
-    assert platform_symbol("600000.SH", "xueqiu") == "SH600000"
     assert platform_symbol("300750.SZ", "eastmoney_guba") == "300750"
     assert source_url("300750.SZ", "eastmoney_guba") == "https://guba.eastmoney.com/list,300750.html"
-    assert source_url("600000.SH", "xueqiu") == "https://xueqiu.com/S/SH600000"
+    with pytest.raises(ValueError):
+        platform_symbol("300750.SZ", "unsupported_source")
 
 
 @pytest.mark.unit
@@ -313,7 +312,7 @@ def test_social_monitor_parser_extracts_common_json_shapes():
         }
     }
 
-    posts = parse_json_posts(payload, "xueqiu", "300750.SZ", "SZ300750")
+    posts = parse_json_posts(payload, "eastmoney_guba", "300750.SZ", "300750")
 
     assert len(posts) == 1
     assert posts[0]["post_id"] == "p1"
@@ -328,9 +327,9 @@ def test_social_monitor_storage_deduplicates_and_social_provider_reads(tmp_path)
     set_config(config)
     storage = SocialMonitorStorage()
     post = {
-        "source": "xueqiu",
+        "source": "eastmoney_guba",
         "ts_code": "300750.SZ",
-        "platform_symbol": "SZ300750",
+        "platform_symbol": "300750",
         "post_id": "p1",
         "title": "宁德时代利好突破",
         "content": "继续看多",
@@ -342,7 +341,7 @@ def test_social_monitor_storage_deduplicates_and_social_provider_reads(tmp_path)
         "like_count": 8,
         "read_count": 1000,
         "repost_count": 0,
-        "url": "https://xueqiu.com/S/SZ300750",
+        "url": "https://guba.eastmoney.com.cn/news,300750,p1.html",
         "text_signature": "sig1",
         "sentiment": "positive",
         "sentiment_score": 0.4,
@@ -374,13 +373,13 @@ def test_social_monitor_coverage_reports_failed_run(tmp_path):
     config["data_cache_dir"] = str(tmp_path)
     set_config(config)
     storage = SocialMonitorStorage()
-    run_id = storage.begin_run("xueqiu", "300750.SZ")
+    run_id = storage.begin_run("eastmoney_guba", "300750.SZ")
     storage.finish_run(run_id, "error", 0, 0, "verification required")
 
     text = social_provider.get_social_monitoring_coverage("300750.SZ")
 
     assert "verification required" in text
-    assert "xueqiu" in text
+    assert "eastmoney_guba" in text
 
 
 @pytest.mark.unit

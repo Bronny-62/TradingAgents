@@ -81,7 +81,7 @@ def get_a_share_social_sentiment(ts_code: str, start_date: str, end_date: str) -
     if not rows:
         text = (
             f"## Social sentiment coverage for {ts_code}\n\n"
-            "No captured Eastmoney Guba or Xueqiu browser-session forum posts are available for this date range. "
+            "No captured Eastmoney Guba browser-session forum posts are available for this date range. "
             "Enable the Step 2 Eastmoney Guba authorization flow or run `tradingagents social-login` once, then "
             f"`tradingagents social-monitor --symbols {ts_code} --once --sources eastmoney_guba` to populate "
             "authorized local forum data. Current fallback coverage: "
@@ -143,15 +143,6 @@ def get_social_monitoring_coverage(ts_code: str) -> str:
     rows.extend([
         {
             "source": "Eastmoney Guba",
-            "status": "browser monitor configured" if monitor_enabled else "browser monitor disabled",
-            "method": "Playwright local profile; no anti-bot bypass",
-            "posts": "",
-            "last_seen": "",
-            "confidence": "depends on latest successful capture",
-            "error": "",
-        },
-        {
-            "source": "Xueqiu",
             "status": "browser monitor configured" if monitor_enabled else "browser monitor disabled",
             "method": "Playwright local profile; no anti-bot bypass",
             "posts": "",

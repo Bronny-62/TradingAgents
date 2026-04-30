@@ -8,20 +8,6 @@ BigA-Analysis-Agents 是
 
 本项目仅用于研究和决策辅助，不会自动下单，不承诺收益，也不构成投资、金融或交易建议。
 
-## 使用截图
-
-README 中的真实使用截图统一放在 `docs/images/` 目录。你上传的三张截图请使用以下文件名：
-
-- `docs/images/cli-setup.png`
-- `docs/images/portfolio-decision.png`
-- `docs/images/market-report.png`
-
-![CLI 配置流程](docs/images/cli-setup.png)
-
-![投资组合经理最终决策](docs/images/portfolio-decision.png)
-
-![市场分析师报告](docs/images/market-report.png)
-
 ## 面向 A 股市场的适配
 
 BigA-Analysis-Agents 使用 Tushare `ts_code` 格式分析 A 股标的，例如
@@ -30,15 +16,28 @@ BigA-Analysis-Agents 使用 Tushare `ts_code` 格式分析 A 股标的，例如
 相较于原始美股工作流，本项目主要做了以下适配：
 
 - A 股代码规范化，并使用更符合本地市场的沪深 300 基准反思逻辑。
-- 接入 Tushare 日线、估值、资金流、涨跌停、财务表、热度类信号。
+- 接入 Tushare 日线、估值、资金流、涨跌停、财务表、公告、热度类信号。
 - 可选接入 iFinD QuantAPI，补充实时行情和人气/选股类信号。
-- 接入 OpenNews 和 Jin10 MCP，补充中国市场新闻与快讯背景。
-- 接入巨潮资讯/Cninfo 公告查询，用于上市公司披露信息。
-- 支持东方财富股吧本地浏览器会话监控，需要用户手动登录。
+- 接入 OpenNews，并通过 Jin10 备用链路补充中国市场新闻与快讯背景。
+- 公告优先使用 Tushare，必要时回退到巨潮资讯/Cninfo 查询。
+- 支持东方财富股吧本地浏览器会话监控，需要用户手动登录，并结合 Tushare 热度与可选 iFinD 人气信号。
 - 分析师、研究团队、交易员、风控团队、投资组合经理均支持所选输出语言同步。
 - 终端 Live UI 针对长表格、多行工具结果和中文报告做了渲染稳定性优化。
 
 当前活跃的 A 股分析智能体不再暴露原始美股工具链，例如 Yahoo Finance、Reddit、内部人交易或 SPY alpha 等。
+
+## 数据源
+
+你需要自行申请并管理数据源账号。本仓库不会包含或分发第三方行情数据、账号凭据、浏览器 Cookie、本地缓存或导出的分析报告。
+
+| 模块 | 数据源 | 用途 | 官方链接 / API 获取入口 |
+| --- | --- | --- | --- |
+| 市场 | Tushare Pro + 可选 iFinD QuantAPI | K 线、估值、资金流、涨跌停、技术指标，以及可选实时行情补充 | [Tushare Pro](https://tushare.pro), [Tushare Token 说明](https://tushare.pro/document/1?doc_id=39), [iFinD API 示例](https://quantapi.51ifind.com/gwstatic/static/ds_web/quantapi-web/example.html), [iFinD 帮助中心](https://ftwc.51ifind.com/gwstatic/static/ds_web/quantapi-web/help-center.html) |
+| 新闻 | OpenNews MCP / REST + Jin10 MCP 备用链路 | 新闻搜索、市场背景、宏观/政策背景，以及快讯兜底链路 | [OpenNews token 入口](https://6551.io/mcp), [OpenNews MCP 文档](https://github.com/6551Team/opennews-mcp/blob/main/docs/README_ZH.md), [Jin10 MCP 文档](https://mcp.jin10.com/app/doc.html) |
+| 基本面 | Tushare Pro + 巨潮资讯/Cninfo 公告备用查询 | 公司概况、财务报表、财务指标、分红、股本、业绩预告、业绩快报和公告 | [Tushare Pro](https://tushare.pro), [Tushare Token 说明](https://tushare.pro/document/1?doc_id=39), [巨潮资讯](https://www.cninfo.com.cn/), [Cninfo WebAPI](https://webapi.cninfo.com.cn/#/apiDoc) |
+| 社媒 | 东方财富股吧 + Tushare 热度 + 可选 iFinD 人气信号 | 授权浏览器会话论坛内容、Tushare `dc_hot` / `ths_hot`，以及可选 iFinD 智能选股人气类信号 | [东方财富股吧](https://guba.eastmoney.com.cn/), [Tushare Pro](https://tushare.pro), [Tushare Token 说明](https://tushare.pro/document/1?doc_id=39), [iFinD API 示例](https://quantapi.51ifind.com/gwstatic/static/ds_web/quantapi-web/example.html), [iFinD 帮助中心](https://ftwc.51ifind.com/gwstatic/static/ds_web/quantapi-web/help-center.html) |
+
+社媒监控不会绕过验证码，不使用代理池，不做浏览器指纹伪装，也不会共享凭据。如果平台要求验证或阻断自动化，采集器会记录结构化失败信息，主分析流程会继续使用其他可用信号。
 
 ## 完整报告模块
 
@@ -55,48 +54,52 @@ BigA-Analysis-Agents 使用 Tushare `ts_code` 格式分析 A 股标的，例如
 5. **投资组合经理决策**
    给出最终组合级决策和风险控制建议。
 
-## 数据源
+## 使用示例
 
-你需要自行申请并管理数据源账号。本仓库不会包含或分发第三方行情数据、账号凭据、浏览器 Cookie、本地缓存或导出的分析报告。
+交互式 CLI 启动与配置流程。
 
-| 模块 | 数据源 | 用途 | 凭据 |
-| --- | --- | --- | --- |
-| 市场 | Tushare Pro | K 线、估值、资金流、涨跌停、财务表 | `TUSHARE_TOKEN` |
-| 市场 / 社媒 | iFinD QuantAPI | 可选实时行情和补充信号 | `IFIND_ACCESS_TOKEN`, `IFIND_REFRESH_TOKEN` |
-| 新闻 | OpenNews MCP / REST | 新闻搜索与市场背景 | `OPENNEWS_TOKEN` |
-| 新闻备用 | Jin10 MCP | 快讯和新闻备用链路 | `JIN10_MCP_TOKEN` |
-| 基本面 | 巨潮资讯 / Cninfo WebAPI | 公告与披露链接 | 通常不需要本地 API key |
-| 社媒 | 东方财富股吧 | 基于授权浏览器会话的论坛监控 | 本地浏览器登录 |
-| 社媒可选 | 雪球 | 实验性的浏览器会话监控 | 本地浏览器登录 |
+![CLI 启动界面](docs/images/cli-startup.png)
 
-社媒监控不会绕过验证码，不使用代理池，不做浏览器指纹伪装，也不会共享凭据。如果平台要求验证或阻断自动化，采集器会记录结构化失败信息，主分析流程会继续使用其他可用信号。
+市场分析师报告，展示 A 股价格走势、技术结构和关键行情信号。
+
+![市场分析师报告](docs/images/market-analyst.png)
+
+社媒情绪分析师报告，结合授权论坛内容、Tushare 热度和可选补充信号。
+
+![社媒情绪分析师报告](docs/images/social-sentiment-analyst.png)
+
+新闻分析师报告，汇总中国市场新闻、政策背景和公司事件。
+
+![新闻分析师报告](docs/images/news-analyst.png)
+
+研究团队决策，展示多方和空方观点的辩论过程。
+
+![研究团队决策](docs/images/research-team-decision.png)
+
+研究经理汇总，将辩论结论收敛为投资计划。
+
+![研究经理汇总](docs/images/research-manager-summary.png)
+
+交易团队计划，基于研究经理投资计划生成交易行动方案。
+
+![交易团队计划](docs/images/trading-team-plan.png)
+
+投资组合经理最终决策，给出组合级行动建议和风险控制。
+
+![投资组合经理决策](docs/images/portfolio-manager-decision.png)
+
+完整输出示例：[002837.SZ 完整分析报告](reports/002837.SZ_20260430_173054/complete_report.md)。
 
 ## 安装
 
 推荐使用 Python 3.13。
 
 ```bash
-git clone https://github.com/Bronny-62/TradingAgents.git
-cd TradingAgents
+git clone https://github.com/Bronny-62/BigA-Analysis-Agents.git
+cd BigA-Analysis-Agents
 python -m venv .venv
 source .venv/bin/activate
 pip install -e .
-```
-
-推荐启动方式：
-
-```bash
-source .venv/bin/activate
-pip install -e .
-./start.sh
-```
-
-Windows：
-
-```bat
-.venv\Scripts\activate
-pip install -e .
-start.bat
 ```
 
 ## 配置
@@ -117,7 +120,7 @@ IFIND_ENABLED=true
 IFIND_ACCESS_TOKEN=
 IFIND_REFRESH_TOKEN=
 SOCIAL_MONITOR_ENABLED=false
-SOCIAL_MONITOR_SOURCES=eastmoney_guba,xueqiu
+SOCIAL_MONITOR_SOURCES=eastmoney_guba
 ```
 
 LLM 服务的密钥也通过 `.env` 配置，例如 `OPENAI_API_KEY`、`DEEPSEEK_API_KEY`、
@@ -125,22 +128,28 @@ LLM 服务的密钥也通过 `.env` 配置，例如 `OPENAI_API_KEY`、`DEEPSEEK
 
 不要提交 `.env`、浏览器 profile、SQLite 数据库、JSONL 缓存、导出报告、Cookie、HAR 文件或 trace 归档。
 
-## 使用
+## 使用方法
 
-启动交互式 CLI：
+推荐启动方式（macOS / Linux）：
 
 ```bash
-python -m cli.main analyze
+./start.sh
 ```
 
-随后输入 A 股 `ts_code`，例如 `300750.SZ`。
+Windows：
+
+```bat
+start.bat
+```
+
+启动脚本会先执行运行环境检查，然后进入交互式分析流程。随后输入 A 股 `ts_code`，例如 `300750.SZ`。
 
 在社区情绪配置步骤中，可以选择是否启用东方财富股吧监控。如果启用，系统会打开 Chrome 到对应股吧页面。你需要手动登录并完成必要验证，然后回到终端继续分析。
 
 常用命令：
 
 ```bash
-# 带运行时检查的启动方式
+# 推荐启动方式（macOS / Linux）
 ./start.sh
 
 # iFinD 连通性检查

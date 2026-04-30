@@ -1733,7 +1733,7 @@ def social_monitor(
     sources: str = typer.Option(
         "",
         "--sources",
-        help="Comma-separated sources: eastmoney_guba,xueqiu. Defaults to env/config.",
+        help="Comma-separated sources: eastmoney_guba. Defaults to env/config.",
     ),
     scroll_seconds: int = typer.Option(
         90,
@@ -1756,7 +1756,7 @@ def social_monitor(
         help="Show browser during collection. Useful for diagnosing login or verification pages.",
     ),
 ):
-    """Collect Eastmoney Guba/Xueqiu forum posts using an authorized browser session."""
+    """Collect Eastmoney Guba forum posts using an authorized browser session."""
     from tradingagents.dataflows.a_share_utils import validate_ts_code
     from tradingagents.dataflows.social_monitor.runner import collect_loop, collect_once
     from tradingagents.dataflows.social_monitor.sources import parse_sources

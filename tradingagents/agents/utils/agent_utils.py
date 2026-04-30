@@ -1,4 +1,5 @@
 from langchain_core.messages import HumanMessage, RemoveMessage
+from langgraph.graph.message import REMOVE_ALL_MESSAGES
 
 from tradingagents.agents.utils.a_share_tools import (
     get_a_share_announcements,
@@ -50,17 +51,9 @@ def build_instrument_context(ticker: str) -> str:
 def create_msg_delete():
     def delete_messages(state):
         """Clear messages and add placeholder for Anthropic compatibility"""
-        messages = state["messages"]
-
-        # Remove all messages
-        removal_operations = [RemoveMessage(id=m.id) for m in messages]
-
-        # Add a minimal placeholder message
         placeholder = HumanMessage(content="Continue")
 
-        return {"messages": removal_operations + [placeholder]}
+        return {"messages": [RemoveMessage(id=REMOVE_ALL_MESSAGES), placeholder]}
 
     return delete_messages
 
-
-        

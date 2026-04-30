@@ -1,11 +1,12 @@
 import unittest
 from unittest.mock import patch
 
-from langchain_core.messages import AIMessage
+from langchain_core.messages import AIMessage, HumanMessage, ToolMessage
 import pytest
 
 from tradingagents.llm_clients.openai_client import OpenAIClient
 from tradingagents.llm_clients.openai_client import NormalizedChatOpenAI
+from tradingagents.llm_clients.openai_client import _repair_tool_call_message_sequence
 
 
 @pytest.mark.unit
@@ -85,6 +86,47 @@ class TestOpenAICompatibleProviderConfig(unittest.TestCase):
             payload["messages"][0]["reasoning_content"],
             "Private reasoning that DeepSeek requires.",
         )
+
+    def test_incomplete_tool_call_history_is_repaired_before_request(self):
+        llm = NormalizedChatOpenAI(model="deepseek-chat", api_key="test")
+        payload = llm._get_request_payload(
+            [
+                HumanMessage(content="Analyze 000001.SZ"),
+                AIMessage(
+                    content="",
+                    tool_calls=[
+                        {"name": "search_a_share_news", "args": {}, "id": "call_1"},
+                        {"name": "get_cn_macro_news", "args": {}, "id": "call_2"},
+                    ],
+                ),
+                ToolMessage(content="company news rows", tool_call_id="call_1"),
+                HumanMessage(content="Continue"),
+            ]
+        )
+
+        messages = payload["messages"]
+        assistant_index = next(
+            i for i, message in enumerate(messages) if message["role"] == "assistant"
+        )
+        following = messages[assistant_index + 1 : assistant_index + 3]
+        self.assertEqual([message["role"] for message in following], ["tool", "tool"])
+        self.assertEqual(
+            [message["tool_call_id"] for message in following],
+            ["call_1", "call_2"],
+        )
+        self.assertIn("unavailable", following[1]["content"])
+
+    def test_dangling_tool_message_is_removed_before_request(self):
+        messages, repair_count = _repair_tool_call_message_sequence(
+            [
+                {"role": "user", "content": "Continue"},
+                {"role": "tool", "tool_call_id": "orphan", "content": "orphan"},
+                {"role": "assistant", "content": "Done"},
+            ]
+        )
+
+        self.assertEqual(repair_count, 1)
+        self.assertEqual([message["role"] for message in messages], ["user", "assistant"])
 
     def test_deepseek_models_skip_structured_output_tool_choice(self):
         for model in ("deepseek-reasoner", "deepseek-v4-pro", "deepseek-v4-flash", "deepseek-chat"):

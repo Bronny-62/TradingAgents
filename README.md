@@ -11,21 +11,6 @@ This project is for research and decision support only. It does not place
 orders, does not guarantee returns, and is not investment, financial, or trading
 advice.
 
-## Screenshots
-
-The README expects real usage screenshots under `docs/images/`. The three
-uploaded screenshots should use these filenames:
-
-- `docs/images/cli-setup.png`
-- `docs/images/portfolio-decision.png`
-- `docs/images/market-report.png`
-
-![CLI setup flow](docs/images/cli-setup.png)
-
-![Portfolio manager decision](docs/images/portfolio-decision.png)
-
-![Market analyst report](docs/images/market-report.png)
-
 ## A-Share Adaptations
 
 BigA-Analysis-Agents analyzes symbols in Tushare `ts_code` format, for example
@@ -35,17 +20,36 @@ Compared with the upstream US-market workflow, this fork focuses on:
 
 - China A-share symbol normalization and CSI 300 oriented reflection.
 - Tushare daily bars, valuation, money flow, limit-up/limit-down, financial
-  tables, and hotness-style signals.
+  tables, announcements, and hotness-style signals.
 - Optional iFinD QuantAPI real-time quote and popularity-style enrichment.
-- OpenNews and Jin10 MCP news search for China market context.
-- Cninfo/Juchao announcement lookup for listed-company disclosures.
-- Eastmoney Guba browser-session social monitoring with manual login.
+- OpenNews with Jin10 fallback for China market news and flash context.
+- Cninfo/Juchao fallback lookup for listed-company announcements.
+- Eastmoney Guba browser-session social monitoring with manual login, plus
+  Tushare hotness and optional iFinD popularity signals.
 - Chinese output synchronization across analyst, research, trader, risk, and
   portfolio-manager modules.
 - Terminal rendering tuned for long, table-heavy A-share reports.
 
 The active analyst agents no longer expose the upstream US-market tool schemas
 such as Yahoo Finance, Reddit, insider transactions, or SPY alpha.
+
+## Data Sources
+
+You need to apply for and manage your own data-source accounts. This repository
+does not include or redistribute third-party market data, credentials, browser
+cookies, local caches, or exported reports.
+
+| Channel | Sources | Used For | Official Link / API Entry |
+| --- | --- | --- | --- |
+| Market | Tushare Pro + optional iFinD QuantAPI | OHLCV, valuation, money flow, limit data, technical indicators, and optional real-time quote enrichment | [Tushare Pro](https://tushare.pro), [Tushare token guide](https://tushare.pro/document/1?doc_id=39), [iFinD API examples](https://quantapi.51ifind.com/gwstatic/static/ds_web/quantapi-web/example.html), [iFinD help center](https://ftwc.51ifind.com/gwstatic/static/ds_web/quantapi-web/help-center.html) |
+| News | OpenNews MCP / REST + Jin10 MCP fallback | News search, market context, macro/policy context, and flash/news fallback | [OpenNews token portal](https://6551.io/mcp), [OpenNews MCP docs](https://github.com/6551Team/opennews-mcp/blob/main/docs/README_ZH.md), [Jin10 MCP docs](https://mcp.jin10.com/app/doc.html) |
+| Fundamentals | Tushare Pro + Cninfo/Juchao fallback for announcements | Company profile, financial statements, financial indicators, dividends, share float, forecasts, express reports, and announcements | [Tushare Pro](https://tushare.pro), [Tushare token guide](https://tushare.pro/document/1?doc_id=39), [Cninfo](https://www.cninfo.com.cn/), [Cninfo WebAPI](https://webapi.cninfo.com.cn/#/apiDoc) |
+| Social | Eastmoney Guba + Tushare hotness + optional iFinD popularity signals | Authorized forum posts, Tushare `dc_hot` / `ths_hot`, and optional iFinD smart-stock-picking popularity signals | [Eastmoney Guba](https://guba.eastmoney.com.cn/), [Tushare Pro](https://tushare.pro), [Tushare token guide](https://tushare.pro/document/1?doc_id=39), [iFinD API examples](https://quantapi.51ifind.com/gwstatic/static/ds_web/quantapi-web/example.html), [iFinD help center](https://ftwc.51ifind.com/gwstatic/static/ds_web/quantapi-web/help-center.html) |
+
+The social monitor does not implement captcha bypass, proxy pools, fingerprint
+spoofing, credential sharing, or anti-bot circumvention. If a site requires
+verification or blocks automation, collection fails gracefully and the analysis
+continues with available signals.
 
 ## Report Modules
 
@@ -62,53 +66,52 @@ A complete analysis report is organized into five sections:
 5. **Portfolio Manager Decision**
    Final portfolio-level decision and actionable risk controls.
 
-## Data Sources
+## Usage Examples
 
-You need to apply for and manage your own data-source accounts. This repository
-does not include or redistribute third-party market data, credentials, browser
-cookies, local caches, or exported reports.
+Interactive CLI startup and configuration flow.
 
-| Channel | Source | Used For | Credential |
-| --- | --- | --- | --- |
-| Market | Tushare Pro | OHLCV, valuation, money flow, limit data, financial tables | `TUSHARE_TOKEN` |
-| Market / Social | iFinD QuantAPI | Optional quote and enrichment signals | `IFIND_ACCESS_TOKEN`, `IFIND_REFRESH_TOKEN` |
-| News | OpenNews MCP / REST | News search and market context | `OPENNEWS_TOKEN` |
-| News fallback | Jin10 MCP | Flash/news fallback | `JIN10_MCP_TOKEN` |
-| Fundamentals | Cninfo / Juchao WebAPI | Announcements and disclosure links | usually no local API key |
-| Social | Eastmoney Guba | Forum monitoring through authorized browser session | local browser login |
-| Social optional | Xueqiu | Experimental browser-session monitoring | local browser login |
+![CLI startup flow](docs/images/cli-startup.png)
 
-The social monitor does not implement captcha bypass, proxy pools, fingerprint
-spoofing, credential sharing, or anti-bot circumvention. If a site requires
-verification or blocks automation, collection fails gracefully and the analysis
-continues with available signals.
+Market analyst report with A-share price action, technical context, and key market signals.
+
+![Market analyst report](docs/images/market-analyst.png)
+
+Social sentiment analyst report combining authorized forum signals, Tushare hotness, and optional enrichment.
+
+![Social sentiment analyst report](docs/images/social-sentiment-analyst.png)
+
+News analyst report summarizing China market news, policy context, and company events.
+
+![News analyst report](docs/images/news-analyst.png)
+
+Research team decision showing the debate between bull and bear views.
+
+![Research team decision](docs/images/research-team-decision.png)
+
+Research manager summary that turns the debate into an investment plan.
+
+![Research manager summary](docs/images/research-manager-summary.png)
+
+Trading team plan derived from the research manager's investment plan.
+
+![Trading team plan](docs/images/trading-team-plan.png)
+
+Portfolio manager final decision with portfolio-level action and risk controls.
+
+![Portfolio manager decision](docs/images/portfolio-manager-decision.png)
+
+Full sample output: [002837.SZ complete analysis report](reports/002837.SZ_20260430_173054/complete_report.md).
 
 ## Installation
 
 Python 3.13 is recommended.
 
 ```bash
-git clone https://github.com/Bronny-62/TradingAgents.git
-cd TradingAgents
+git clone https://github.com/Bronny-62/BigA-Analysis-Agents.git
+cd BigA-Analysis-Agents
 python -m venv .venv
 source .venv/bin/activate
 pip install -e .
-```
-
-Recommended launch sequence:
-
-```bash
-source .venv/bin/activate
-pip install -e .
-./start.sh
-```
-
-On Windows:
-
-```bat
-.venv\Scripts\activate
-pip install -e .
-start.bat
 ```
 
 ## Configuration
@@ -129,7 +132,7 @@ IFIND_ENABLED=true
 IFIND_ACCESS_TOKEN=
 IFIND_REFRESH_TOKEN=
 SOCIAL_MONITOR_ENABLED=false
-SOCIAL_MONITOR_SOURCES=eastmoney_guba,xueqiu
+SOCIAL_MONITOR_SOURCES=eastmoney_guba
 ```
 
 LLM provider keys are also configured through `.env`, for example
@@ -139,15 +142,22 @@ or other supported providers.
 Never commit `.env`, browser profiles, SQLite databases, JSONL caches, exported
 reports, cookies, HAR files, or trace archives.
 
-## Usage
+## Usage Guide
 
-Start the interactive CLI:
+Recommended one-click startup on macOS / Linux:
 
 ```bash
-python -m cli.main analyze
+./start.sh
 ```
 
-Then enter an A-share `ts_code`, for example `300750.SZ`.
+On Windows:
+
+```bat
+start.bat
+```
+
+The startup script performs runtime checks and enters the interactive analysis
+flow. Then enter an A-share `ts_code`, for example `300750.SZ`.
 
 During the community sentiment step, you can enable Eastmoney Guba monitoring.
 If enabled, Chrome opens the stock's Guba page. Log in manually, complete any
@@ -156,7 +166,7 @@ verification, return to the terminal, and continue the analysis.
 Useful commands:
 
 ```bash
-# Start with runtime checks
+# Recommended one-click startup on macOS / Linux
 ./start.sh
 
 # iFinD connectivity smoke test

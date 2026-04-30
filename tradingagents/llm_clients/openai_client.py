@@ -1,3 +1,4 @@
+import logging
 import os
 from typing import Any, Optional
 
@@ -6,6 +7,8 @@ from langchain_openai import ChatOpenAI
 
 from .base_client import BaseLLMClient, normalize_content
 from .validators import validate_model
+
+logger = logging.getLogger(__name__)
 
 
 class NormalizedChatOpenAI(ChatOpenAI):
@@ -30,6 +33,15 @@ class NormalizedChatOpenAI(ChatOpenAI):
             reasoning_content = message.additional_kwargs.get("reasoning_content")
             if reasoning_content is not None:
                 message_dict["reasoning_content"] = reasoning_content
+
+        repaired_messages, repair_count = _repair_tool_call_message_sequence(messages)
+        if repair_count:
+            payload["messages"] = repaired_messages
+            logger.debug(
+                "Repaired %d incomplete or dangling tool message(s) before sending "
+                "an OpenAI-compatible chat request.",
+                repair_count,
+            )
 
         return payload
 
@@ -108,6 +120,91 @@ def _deepseek_structured_output_enabled() -> bool:
         "yes",
         "on",
     }
+
+
+def _repair_tool_call_message_sequence(
+    messages: list[dict[str, Any]],
+) -> tuple[list[dict[str, Any]], int]:
+    """Make chat-completions tool history protocol-valid.
+
+    OpenAI-compatible providers reject a request when an assistant message with
+    ``tool_calls`` is not immediately followed by one tool result per call id.
+    LangGraph retries, interruptions, or stale checkpoints can leave that
+    history incomplete. Insert an explicit unavailable-result ToolMessage so the
+    model can continue instead of aborting the whole report.
+    """
+    repaired: list[dict[str, Any]] = []
+    repair_count = 0
+    i = 0
+
+    while i < len(messages):
+        message = messages[i]
+
+        if message.get("role") == "assistant" and message.get("tool_calls"):
+            required_ids: list[str] = []
+            valid_tool_calls: list[dict[str, Any]] = []
+            for call in message.get("tool_calls") or []:
+                call_id = call.get("id")
+                if not call_id:
+                    repair_count += 1
+                    continue
+                valid_tool_calls.append(call)
+                required_ids.append(call_id)
+
+            if not valid_tool_calls:
+                sanitized_message = dict(message)
+                sanitized_message.pop("tool_calls", None)
+                if not sanitized_message.get("content"):
+                    sanitized_message["content"] = (
+                        "A previous tool-call request was malformed and could not "
+                        "be executed. Continue with the available evidence."
+                    )
+                repaired.append(sanitized_message)
+                i += 1
+                continue
+
+            if len(valid_tool_calls) != len(message.get("tool_calls") or []):
+                message = {**message, "tool_calls": valid_tool_calls}
+
+            repaired.append(message)
+            i += 1
+
+            seen: set[str] = set()
+            while i < len(messages) and messages[i].get("role") == "tool":
+                tool_message = messages[i]
+                tool_call_id = tool_message.get("tool_call_id")
+                if tool_call_id in required_ids and tool_call_id not in seen:
+                    repaired.append(tool_message)
+                    seen.add(tool_call_id)
+                else:
+                    repair_count += 1
+                i += 1
+
+            for call_id in required_ids:
+                if call_id in seen:
+                    continue
+                synthetic = {
+                    "role": "tool",
+                    "tool_call_id": call_id,
+                    "content": (
+                        "Tool call did not return a result before the next model "
+                        "request. Treat this tool result as unavailable and "
+                        "continue with the available evidence."
+                    ),
+                }
+                repaired.append(synthetic)
+                repair_count += 1
+            continue
+
+        if message.get("role") == "tool":
+            repair_count += 1
+            i += 1
+            continue
+
+        repaired.append(message)
+        i += 1
+
+    return repaired, repair_count
 
 # Kwargs forwarded from user config to ChatOpenAI
 _PASSTHROUGH_KWARGS = (

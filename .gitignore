@@ -225,7 +225,11 @@ cache/
 .tradingagents/
 
 # TradingAgents local runtime state
-reports/
+reports/*
+!reports/
+!reports/002837.SZ_20260430_173054/
+reports/002837.SZ_20260430_173054/*
+!reports/002837.SZ_20260430_173054/complete_report.md
 logs/
 memory/
 checkpoints/
@@ -257,5 +261,4 @@ videos/
 # macOS
 .DS_Store
 
-# Locally exported CLI reports
-reports/
+# Locally exported CLI reports stay ignored except the curated README sample above.

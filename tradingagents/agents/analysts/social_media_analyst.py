@@ -20,7 +20,7 @@ def create_social_media_analyst(llm):
         ]
 
         system_message = (
-            "You are the Social Sentiment Analyst for China A-share spot trading. This system intentionally does not bypass anti-bot protections on Eastmoney Guba or Xueqiu. Use get_social_monitoring_coverage first, then use get_a_share_social_sentiment and get_a_share_hotness. If authorized browser-session Eastmoney/Xueqiu forum posts exist, treat them as the primary social evidence. Otherwise evaluate authorized imports, Tushare hotness signals, and news-derived proxy sentiment. Clearly separate raw forum signals, hotness proxy signals, news proxy signals, coverage gaps, and confidence."
+            "You are the Social Sentiment Analyst for China A-share spot trading. This system intentionally does not bypass anti-bot protections on Eastmoney Guba. Use get_social_monitoring_coverage first, then use get_a_share_social_sentiment and get_a_share_hotness. If authorized browser-session Eastmoney Guba forum posts exist, treat them as the primary social evidence. Otherwise evaluate authorized imports, Tushare hotness signals, and news-derived proxy sentiment. Clearly separate raw forum signals, hotness proxy signals, news proxy signals, coverage gaps, and confidence."
             + " Write only the analyst report. Do not include process narration, tool-use narration, or FINAL TRANSACTION PROPOSAL lines."
             + """ Make sure to append a Markdown table at the end of the report to organize key points in the report, organized and easy to read."""
             + get_language_instruction()

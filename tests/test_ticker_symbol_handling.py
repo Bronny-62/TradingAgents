@@ -1,9 +1,11 @@
 import unittest
 
 import pytest
+from langchain_core.messages import AIMessage, HumanMessage, ToolMessage
+from langgraph.graph.message import REMOVE_ALL_MESSAGES
 
 from cli.utils import normalize_ticker_symbol
-from tradingagents.agents.utils.agent_utils import build_instrument_context
+from tradingagents.agents.utils.agent_utils import build_instrument_context, create_msg_delete
 
 
 @pytest.mark.unit
@@ -20,6 +22,24 @@ class TickerSymbolHandlingTests(unittest.TestCase):
     def test_normalize_ticker_symbol_rejects_non_a_share_symbol(self):
         with self.assertRaises(ValueError):
             normalize_ticker_symbol("NVDA")
+
+    def test_message_clear_uses_atomic_remove_all(self):
+        delete_messages = create_msg_delete()
+        result = delete_messages(
+            {
+                "messages": [
+                    HumanMessage(content="x"),
+                    AIMessage(
+                        content="",
+                        tool_calls=[{"name": "foo", "args": {}, "id": "call_1"}],
+                    ),
+                    ToolMessage(content="ok", tool_call_id="call_1"),
+                ]
+            }
+        )
+
+        self.assertEqual(result["messages"][0].id, REMOVE_ALL_MESSAGES)
+        self.assertEqual(result["messages"][1].content, "Continue")
 
 
 if __name__ == "__main__":
