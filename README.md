@@ -40,12 +40,12 @@ BigA-Analysis-Agents 使用 Tushare `ts_code` 格式分析 A 股标的，例如
 
 你需要自行申请并管理数据源账号。本仓库不会包含或分发第三方行情数据、账号凭据、浏览器 Cookie、本地缓存或导出的分析报告。
 
-| 模块 | 数据源 | 用途 | 官方链接 / API 获取入口 |
+| 分析模块 | 数据源 | 用途 | 官方链接 / API 获取入口 |
 | --- | --- | --- | --- |
-| 市场 | Tushare Pro + 可选 iFinD QuantAPI | K 线、估值、资金流、涨跌停、技术指标，以及可选实时行情补充 | [Tushare Pro](https://tushare.pro), [Tushare Token 说明](https://tushare.pro/document/1?doc_id=39), [iFinD API 示例](https://quantapi.51ifind.com/gwstatic/static/ds_web/quantapi-web/example.html), [iFinD 帮助中心](https://ftwc.51ifind.com/gwstatic/static/ds_web/quantapi-web/help-center.html) |
-| 新闻 | OpenNews MCP / REST + Jin10 MCP 备用链路 | 新闻搜索、市场背景、宏观/政策背景，以及快讯兜底链路 | [OpenNews token 入口](https://6551.io/mcp), [OpenNews MCP 文档](https://github.com/6551Team/opennews-mcp/blob/main/docs/README_ZH.md), [Jin10 MCP 文档](https://mcp.jin10.com/app/doc.html) |
-| 基本面 | Tushare Pro + 巨潮资讯/Cninfo 公告备用查询 | 公司概况、财务报表、财务指标、分红、股本、业绩预告、业绩快报和公告 | [Tushare Pro](https://tushare.pro), [Tushare Token 说明](https://tushare.pro/document/1?doc_id=39), [巨潮资讯](https://www.cninfo.com.cn/), [Cninfo WebAPI](https://webapi.cninfo.com.cn/#/apiDoc) |
-| 社媒 | 东方财富股吧 + Tushare 热度 + 可选 iFinD 人气信号 | 授权浏览器会话论坛内容、Tushare `dc_hot` / `ths_hot`，以及可选 iFinD 智能选股人气类信号 | [东方财富股吧](https://guba.eastmoney.com.cn/), [Tushare Pro](https://tushare.pro), [Tushare Token 说明](https://tushare.pro/document/1?doc_id=39), [iFinD API 示例](https://quantapi.51ifind.com/gwstatic/static/ds_web/quantapi-web/example.html), [iFinD 帮助中心](https://ftwc.51ifind.com/gwstatic/static/ds_web/quantapi-web/help-center.html) |
+| 市场行情 | Tushare Pro + 可选 iFinD QuantAPI | K 线、估值、资金流、涨跌停、技术指标，以及可选实时行情补充 | [Tushare Pro](https://tushare.pro), [Tushare Token 说明](https://tushare.pro/document/1?doc_id=39), [iFinD API 示例](https://quantapi.51ifind.com/gwstatic/static/ds_web/quantapi-web/example.html), [iFinD 帮助中心](https://ftwc.51ifind.com/gwstatic/static/ds_web/quantapi-web/help-center.html) |
+| 新闻资讯 | OpenNews MCP / REST + Jin10 MCP 备用链路 | 新闻搜索、市场背景、宏观/政策背景，以及快讯兜底链路 | [OpenNews token 入口](https://6551.io/mcp), [OpenNews MCP 文档](https://github.com/6551Team/opennews-mcp/blob/main/docs/README_ZH.md), [Jin10 MCP 文档](https://mcp.jin10.com/app/doc.html) |
+| 基本面与公告 | Tushare Pro + 巨潮资讯/Cninfo 公告备用查询 | 公司概况、财务报表、财务指标、分红、股本、业绩预告、业绩快报和公告 | [巨潮资讯](https://www.cninfo.com.cn/), [Cninfo WebAPI](https://webapi.cninfo.com.cn/#/apiDoc)，Tushare 入口见“市场行情” |
+| 社媒情绪 | 东方财富股吧 + Tushare 热度 + 可选 iFinD 人气信号 | 授权浏览器会话论坛内容、Tushare `dc_hot` / `ths_hot`，以及可选 iFinD 智能选股人气类信号 | [东方财富股吧](https://guba.eastmoney.com.cn/)，Tushare 与 iFinD 入口见“市场行情” |
 
 社媒监控不会绕过验证码，不使用代理池，不做浏览器指纹伪装，也不会共享凭据。如果平台要求验证或阻断自动化，采集器会记录结构化失败信息，主分析流程会继续使用其他可用信号。
 
