@@ -72,11 +72,11 @@ Full sample output: [002837.SZ complete analysis report](reports/002837.SZ_20260
 
 Interactive CLI startup and configuration flow.
 
-![CLI startup flow](docs/images/cli-startup.png)
+![CLI startup flow](docs/images/cli-startup.png?raw=1&v=39002c22b441)
 
 Portfolio manager final decision with portfolio-level action and risk controls.
 
-![Portfolio manager decision](docs/images/portfolio-manager-decision.png)
+![Portfolio manager decision](docs/images/portfolio-manager-decision.png?raw=1&v=14d188a5cab1)
 
 ## Installation
 

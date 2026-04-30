@@ -60,11 +60,11 @@ BigA-Analysis-Agents 使用 Tushare `ts_code` 格式分析 A 股标的，例如
 
 交互式 CLI 启动与配置流程。
 
-![CLI 启动界面](docs/images/cli-startup.png)
+![CLI 启动界面](docs/images/cli-startup.png?raw=1&v=39002c22b441)
 
 投资组合经理最终决策，给出组合级行动建议和风险控制。
 
-![投资组合经理决策](docs/images/portfolio-manager-decision.png)
+![投资组合经理决策](docs/images/portfolio-manager-decision.png?raw=1&v=14d188a5cab1)
 
 ## 安装
 
