@@ -1,12 +1,22 @@
 # BigA-Analysis-Agents
 
-[English](README.md) | [中文](README.zh-CN.md)
+[中文](README.md) | [English](README.en.md)
 
 BigA-Analysis-Agents 是
 [TauricResearch/TradingAgents](https://github.com/TauricResearch/TradingAgents)
 面向中国 A 股市场改造的多智能体投研分析框架。它保留了原项目的多角色协作流程，并将数据源、提示词、CLI 交互和最终报告结构适配到 A 股分析场景。
 
 本项目仅用于研究和决策辅助，不会自动下单，不承诺收益，也不构成投资、金融或交易建议。
+
+## 推荐模型
+
+推荐搭配 **DeepSeek-V4 系列模型** 使用 API 接入，例如 `deepseek-v4-pro` 或
+`deepseek-v4-flash`。在本系统的多轮分析、研究团队辩论、风险评估和长报告生成场景中，
+DeepSeek-V4 系列的推理分析表现优秀，同时 API 成本很低。
+
+按当前实测口径，一份约 **5w 字** 的 A 股深度多维交易分析报告，API token 成本约
+**0.2 元**。实际成本会受到模型版本、缓存命中、调用轮次、报告长度和官方价格调整影响，
+请以 [DeepSeek 官方价格页](https://api-docs.deepseek.com/quick_start/pricing) 为准。
 
 ## 面向 A 股市场的适配
 

@@ -261,4 +261,7 @@ videos/
 # macOS
 .DS_Store
 
+# Local promotional drafts
+xiaohongshu-post.md
+
 # Locally exported CLI reports stay ignored except the curated README sample above.
